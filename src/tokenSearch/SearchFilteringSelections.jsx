@@ -1,19 +1,12 @@
-// Lists all the exchanges and their allowed networks.
-const networksExchanged = {
-    Ethereum: ['UniswapV3', 'SushiSwap'],
-    Avalanche: ['Pangolin', 'TraderJoe'],
-    BSC: ['PancakeSwap', 'MDex']
-};
-
-// Lists all the exchanges and their allowed networks.
-const exchangesNetworked = {
-    UniswapV3: ['Ethereum'],
-    SushiSwap: ['Ethereum'],
-    Pangolin: ['Avalanche'],
-    TraderJoe: ['Avalanche'],
-    PancakeSwap: ['BSC'],
-    MDex: ['BSC']
-};
+// Lists all the network and exchange pair.
+const pairedNetworkExchange = [
+    ['Ethereum', 'UniswapV3'],
+    ['Ethereum', 'SushiSwap'],
+    ['Avalanche', 'Pangolin'],
+    ['Avalanche', 'TraderJoe'],
+    ['BSC', 'PancakeSwap'],
+    ['BSC', 'MDex'],
+];
 
 /**
  * 
@@ -35,7 +28,7 @@ export const SearchSelectionNetwork = ({ networkName, searchNetworks, setSearchN
                     searchNetworks = searchNetworks.filter(network => network !== networkName);
 
                     // Removes the exchanges associated to "networkName" since it's removed from the search.
-                    searchExchanges = searchExchanges.filter(exchance => !networksExchanged[networkName].includes(exchance));
+                    searchExchanges = searchExchanges.filter(exchange => pairedNetworkExchange.filter(pair => pair[0] === networkName && pair[1] === exchange).length === 0);
                 }
                 else {
                     // Adds "networkName" into "searchNetworks".
@@ -63,7 +56,7 @@ export const SearchSelectionNetwork = ({ networkName, searchNetworks, setSearchN
  */
 export const SearchSelectionExchange = ({ exchangeName, searchExchanges, setSearchExchanges, searchNetworks }) => {
     // Validates that the any of the selected networks are present in "exchangeNetworks".
-    if (searchNetworks.some(network => exchangesNetworked[exchangeName].includes(network))) {
+    if (pairedNetworkExchange.filter(pair => searchNetworks.includes(pair[0]) && pair[1] === exchangeName).length > 0) {
         // --------------------------------------------------------------------------------------------------------------------------------------------------
         // Rendering.
         return <>
