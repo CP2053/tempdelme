@@ -1,52 +1,81 @@
-import React, { useState } from "react"
+import React from "react";
+import {
+  SearchSelectionNetwork,
+  SearchSelectionExchange
+} from "./SearchFilteringSelections";
 
-const NetworkSelection = ({networkName, setNetwork, network}) =>{
 
-  return <>
-    <input checked={network==networkName} type="radio" onClick={()=>setNetwork(networkName)}/>
-    {networkName}
-  </>
-}
-
-export const SearchFiltering = () => {
-  const [network, setNetwork ] = useState()//todo link into redux state
-
+/**
+ * searchNetworks: networks to be searched
+ * setSearchNetworks: function to set "searchNetworks" to the state.
+ * searchExchanges: exchanges to be searched
+ * setSearchExchanges: function to set "setSearchExchanges" to the state.
+ * @returns 
+ */
+export const SearchFiltering = ({ searchNetworks, setSearchNetworks, searchExchanges, setSearchExchanges }) => {
+  // ----------------------------------------------------------------------------------------------------------------------------------------------------
+  // Rendering.
   return (
-    <div style={{border: "solid"}}>
-      <div style={{width: "100%", height: "40px"}}>Select blockchain</div>
-      <NetworkSelection setNetwork={setNetwork} network={network} networkName={"All"}/>
-      <NetworkSelection setNetwork={setNetwork} network={network} networkName={"Ethereum"}/>
-      <NetworkSelection setNetwork={setNetwork} network={network} networkName={"Avalanche"}/>
-      <NetworkSelection setNetwork={setNetwork} network={network} networkName={"BSC"}/>
-      <hr/>
-
-      {network==="Ethereum" && <>
-        <input type="checkbox"/>
-        All exchanges
-        <input type="checkbox"/>
-        UniswapV3
-        <input type="checkbox"/>
-        SushiSwap
-      </>}
-
-      {network==="Avalanche" && <>
-        <input type="checkbox"/>
-        All exchanges
-        <input type="checkbox"/>
-        Pangolin
-        <input type="checkbox"/>
-        TraderJoe
-      </>}
-
-      {network==="BSC" && <>
-        <input type="checkbox"/>
-        All exchanges
-        <input type="checkbox"/>
-        PancakeSwap
-        <input type="checkbox"/>
-        MDex
-      </>}
+    <div style={{ border: "solid", padding: "10px" }}>
+      <SearchSelectionNetwork
+        networkName={"Ethereum"}
+        searchNetworks={searchNetworks}
+        setSearchNetworks={setSearchNetworks}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+      />
+      <SearchSelectionNetwork
+        networkName={"Avalanche"}
+        searchNetworks={searchNetworks}
+        setSearchNetworks={setSearchNetworks}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+      />
+      <SearchSelectionNetwork
+        networkName={"BSC"}
+        searchNetworks={searchNetworks}
+        setSearchNetworks={setSearchNetworks}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+      />
+      <hr />
+      <SearchSelectionExchange
+        exchangeName={"UniswapV3"}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+        searchNetworks={searchNetworks}
+      />
+      <SearchSelectionExchange
+        exchangeName={"SushiSwap"}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+        searchNetworks={searchNetworks}
+      />
+      <SearchSelectionExchange
+        exchangeName={"Pangolin"}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+        searchNetworks={searchNetworks}
+      />
+      <SearchSelectionExchange
+        exchangeName={"TraderJoe"}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+        searchNetworks={searchNetworks}
+      />
+      <SearchSelectionExchange
+        exchangeName={"PancakeSwap"}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+        searchNetworks={searchNetworks}
+      />
+      <SearchSelectionExchange
+        exchangeName={"MDex"}
+        searchExchanges={searchExchanges}
+        setSearchExchanges={setSearchExchanges}
+        searchNetworks={searchNetworks}
+      />
     </div>
   )
 }
-export default SearchFiltering
+export default SearchFiltering;

@@ -1,16 +1,14 @@
-import React from 'react';
+import React, {
+  useState
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-
 import magnifyingGlass from './icon-search.svg';
 import {
   searchTokenPairs,
-  setSearchText,
-} from '../redux/tokenSearchSlice';
-import {
   startSelecting,
   stopSelecting,
-  toggleSelecting,
+  toggleSelecting
 } from '../redux/tokenSearchSlice';
 
 const PairField = styled.div`
@@ -65,59 +63,30 @@ const combinePairText = (pair) => {
   return '';
 };
 
-const SearchInput = () => {
+const SearchInput = ({ searchText, setSearchText }) => {
   const dispatch = useDispatch();
-  const searchText = useSelector(
-    (state) => state?.searchText
-  );
-  const isSelecting = useSelector(
-    (state) => state?.isSelecting
-  );
-  const isLoading = useSelector((state) => state.isLoading);
-  const fetchError = useSelector(
-    (state) => state?.fetchError
-  );
-  const selectedPair = useSelector(
-    (state) => state?.selectedPair
-  );
-  const selectedPairText = selectedPair && combinePairText(selectedPair);
+  // const searchText = useSelector((state) => state?.searchText);
+  // const isSelecting = useSelector((state) => state?.isSelecting);
+  // const isLoading = useSelector((state) => state.isLoading);
+  // const selectedPair = useSelector((state) => state?.selectedPair);
+  // const selectedPairText = selectedPair && combinePairText(selectedPair);
 
-  const onChange = (e) => {
-    const newInputText = e.target.value;
-    dispatch(searchTokenPairs(newInputText));
-    dispatch(setSearchText(newInputText));
-  };
-  const onClick = () => dispatch(startSelecting());
-  const onKeyDown = (e) => e.code === 'Escape' && dispatch(stopSelecting());
 
-  //todo throw to a global error boundary
-  if (fetchError) {
-    return (
-      <PairField>
-        <StyledInput
-          autocomplete={'off'}
-          style={{ color: 'red' }}
-          value={'Something went wrong..'}
-          onChange={() => {}}
-        />
-      </PairField>
-    );
-  }
+  // Initialise the "searchDelayer" state.
+  // The search delayer is used to prevent the search to be launched on each keystrokes and rather waits for a short moment defined in the env file.
+  const [searchDelayer, setSearchDelayer] = useState();
 
-  let value;
-  if (isSelecting) {
-    value = searchText;
-  } else {
-    value = selectedPairText || 'Select a token pair..';
-  }
 
+  // ----------------------------------------------------------------------------------------------------------------------------------------------------
+  // Rendering.
   return (
-    <PairField onClick={onClick}>
+    <PairField
+      onClick={() => dispatch(startSelecting())}>
       <StyledInput
+        placeholder={'Select a token pair..'}
         autocomplete={'off'}
-        value={value}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
+        onChange={e => setSearchText_onChange(searchDelayer, setSearchDelayer, e.target.value, setSearchText)}
+        onKeyDown={e => e.code === 'Escape' && dispatch(stopSelecting())}
       />
       <HideOnSmallScreen
         alt={''}
@@ -128,3 +97,21 @@ const SearchInput = () => {
   );
 };
 export default SearchInput;
+
+/**
+ * Function that handle the delayer of the search; this is done to avoid flooding of the server through GraphQL queries by the user, intentionnally or not.
+ * This is done client side, it is worth as much as the dev console.
+ * Something server side might should be added to cover that aspect.
+ * 
+ * @param {*} searchDelayer 
+ * @param {*} setSearchDelayer 
+ * @param {*} searchText 
+ * @param {*} setSearchText 
+ */
+const setSearchText_onChange = (searchDelayer, setSearchDelayer, searchText, setSearchText) => {
+  // Clears the previous search delayer.
+  clearTimeout(searchDelayer);
+
+  // Sets the new search delayer and the new searc text value.
+  setSearchDelayer(setTimeout(value => setSearchText(value), process.env.REACT_APP_SEARCH_INPUT_TEXT_DELAYER, searchText));
+};

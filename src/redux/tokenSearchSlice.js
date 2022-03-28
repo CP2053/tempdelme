@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import retry from 'async-retry';
 import { stringify } from 'flatted';
-import {searchTokensAsync} from "../tokenSearch/helpers/async";
+import { searchTokensAsync } from "../tokenSearch/helpers/async";
 
 export const setPair = createAsyncThunk(
   'token/setPair',
@@ -29,19 +29,20 @@ const setPairSearchTimestamp = createAsyncThunk(
 export const searchTokenPairs = createAsyncThunk(
   'token/search',
   async (searchString, thunkAPI) => {
-    console.log("searchTokenPairs")
+    console.log("searchTokenPairs: " + searchString)
     try {
       // const { strategy } = thunkAPI.getState().velox;
       const pairSearchTimestamp = new Date().getTime();
       thunkAPI.dispatch(setPairSearchTimestamp(pairSearchTimestamp));
       const data = await retry(
-        () => searchTokensAsync(searchString, JSON.parse(`{"identifiers":{"blockchain":"Avalanche","chainId":"43114","exchange":"Pangolin"},"key":"pangolin","tableSuffix":"pangolin"}`)),//todo this should be props into the component or something -- from src/containers/exchangeSelector/allowableExchanges.ts in velox
+        //todo this should be props into the component or something -- from src/containers/exchangeSelector/allowableExchanges.ts in velox
+        () => searchTokensAsync(searchString, JSON.parse(`{"identifiers":{"blockchain":"Avalanche","chainId":"43114","exchange":"Pangolin"},"key":"pangolin","tableSuffix":"pangolin"}`)),
         { retries: 1 }
       );
-      console.log("data",data)
+      console.log("data", data)
       return { data, pairSearchTimestamp };
     } catch (e) {
-      console.log("err searchTokenPairs",e)
+      console.log("err searchTokenPairs", e)
       throw new Error(stringify(e, Object.getOwnPropertyNames(e)));
     }
   }
@@ -116,6 +117,5 @@ export const tokenSearchSlice = createSlice({
   },
 });
 
-export const { setSearchText, startSelecting, stopSelecting, toggleSelecting } =
-  tokenSearchSlice.actions;
+export const { setSearchText, startSelecting, stopSelecting, toggleSelecting } = tokenSearchSlice.actions;
 export default tokenSearchSlice.reducer;
